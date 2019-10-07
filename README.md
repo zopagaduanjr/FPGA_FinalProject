@@ -1,4 +1,4 @@
-# FPGA_FinalProject
+# Development of Cost-Efficient Air Conditioning Controllers using FPGA
 Our final project
 
 ## To do:
