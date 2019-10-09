@@ -4,12 +4,15 @@ Our final project
 - Module 0011:	Current State
   
 - Module 0100:	Number of people
+
  To add people, Module should be in **0100 0000** then press Key3.
+ 
  To remove people, Module should be in **0100 0001** then press Key3.
 
 - Module 0101:	Room Size
 
  To add area, Module should be in **0101 0000** then press Key3.
+ 
  To remove area, Module should be in **0101 0001** then press Key3.
 
 
