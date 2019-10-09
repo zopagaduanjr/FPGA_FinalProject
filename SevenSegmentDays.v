@@ -1,9 +1,10 @@
 module SevenSegmentDays(bcd, leds2,leds1,leds0);
-	input [3:0] bcd;
+	input [6:0] bcd;
+	
 	output reg [0:6] leds2, leds1, leds0;
 	
 	always @(bcd)
-		case (bcd) // abcdefg
+		case (bcd % 7) // abcdefg
 			0: begin //mon
 			leds0 = 7'b1101010;
 			leds1 = 7'b1100010;
