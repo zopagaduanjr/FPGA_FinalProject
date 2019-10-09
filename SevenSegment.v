@@ -14,5 +14,6 @@ module SevenSegment(bcd, leds);
 			7: leds = 7'b0001111;
 			8: leds = 7'b0000000;
 			9: leds = 7'b0001100;
+			
 		endcase
 endmodule

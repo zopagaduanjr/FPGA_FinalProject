@@ -12,7 +12,13 @@ module OptimumTemperature(Selector, PersonTens, PersonOnes, TempTens, TempOnes);
 	
 		always @(Selector == 3) begin
 		TotalPersons <= PersonTens * 10 + PersonOnes;
-		if(TotalPersons < 15 ) begin
+		
+		if(TotalPersons == 0) begin
+		TempTens <= 4'b0000;
+		TempOnes <= 4'b0000;
+		end
+		
+		if(TotalPersons < 15 && TotalPersons > 0) begin
 		TempTens <= 4'b0010;
 		TempOnes <= 4'b0110;
 		end
@@ -28,7 +34,7 @@ module OptimumTemperature(Selector, PersonTens, PersonOnes, TempTens, TempOnes);
 
 		if(TotalPersons < 45 && TotalPersons > 34) begin
 		TempTens <= 4'b0010;
-		TempOnes <= 4'b0100;
+		TempOnes <= 4'b0000;
 		end
 		
 		end
