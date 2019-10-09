@@ -2,8 +2,7 @@
 Our final project
 
 - Module 0011:	Current State
-  
-  
+  ![v1:MainScreen](Media/Status.jpg)
   
 - Module 0100:	Number of people
 
