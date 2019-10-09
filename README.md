@@ -2,7 +2,8 @@
 Our final project
 
 - Module 0011:	Current State
-  ![v1:MainScreen](Media/Status.jpg)
+
+  ![Current State](Media/Status.jpg)
   
 - Module 0100:	Number of people
 
@@ -10,13 +11,17 @@ Our final project
  
  To remove people, Module should be in **0100 0001** then press Key3.
  
- 
+ ![Current People](Media/People.jpg)
+
 
 - Module 0101:	Room Size
 
  To add area, Module should be in **0101 0000** then press Key3.
  
  To remove area, Module should be in **0101 0001** then press Key3.
+ 
+ ![Current Area](Media/Area.jpg)
+
 
 
 
@@ -31,8 +36,12 @@ Our final project
  | 35 : 44        | 20°C          |
 
 
+![Current Temperature](Media/Temp.jpg)
+
 
 - Module 0111:	Uptime
+
+![Current Up Time](Media/UpTime.jpg)
 
 
 ## To do:
