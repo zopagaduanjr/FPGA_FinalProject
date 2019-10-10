@@ -15,10 +15,11 @@ module MultiplexerOutput_top(Clock,Reset,Increment, Selector,Hex, DayOnes, DayTe
 	wire [3:0] BCD1, BCD0;
 	wire [3:0]  RoomDigit1, RoomDigit0, TempDigit1, TempDigit0;
 	wire [3:0] PersonDigit1, PersonDigit0;
+	wire running;
 	
 	//wag timer code
 	wire [3:0] SecondOnesBCD, SecondTensBCD, MinuteOnesBCD, MinuteTensBCD, HourOnesBCD, HourTensBCD, DayOnesBCD, DayTensBCD, MonthBCD;
-	wire [6:0] BCDCombine;
+	wire [6:0] BCDayCombine, BCDHourCombine, BCDMinuteCombine;
 	wire [6:0] SecondOnes, SecondTens, MinuteOnes, MinuteTens, HourOnes, HourTens;
 	output wire [3:0] DayOnes, MonthOnes;
 	output wire [1:0] DayTens;
@@ -34,7 +35,7 @@ module MultiplexerOutput_top(Clock,Reset,Increment, Selector,Hex, DayOnes, DayTe
 	
 	//runs in the background
 	Clock10ms clock10(.clkin(Clock), .clkout(clkout), .Selector(Selector));
-	ClockCount c1(clkout, Reset, Enable, SecondOnesBCD, SecondTensBCD, MinuteOnesBCD, MinuteTensBCD, HourOnesBCD, HourTensBCD, DayOnesBCD, DayTensBCD, MonthBCD, BCDCombine);
+	ClockCount c1(clkout, Reset, Enable, SecondOnesBCD, SecondTensBCD, MinuteOnesBCD, MinuteTensBCD, HourOnesBCD, HourTensBCD, DayOnesBCD, DayTensBCD, MonthBCD, BCDayCombine, BCDHourCombine, BCDMinuteCombine);
 	//BCDcount counter(clkout, Reset, Enable, BCD1, BCD0, BCDCombine);
 
 	AddRemovePerson addRemovePerson(Selector, Increment, PersonDigit1, PersonDigit0);
@@ -76,7 +77,7 @@ module MultiplexerOutput_top(Clock,Reset,Increment, Selector,Hex, DayOnes, DayTe
 	
 	
 	
-	SevenSegmentDays segdays(BCDCombine, DayLed2,DayLed1,DayLed0);
+	SevenSegmentDays segdays(BCDayCombine, DayLed2,DayLed1,DayLed0);
 				
 	
 	always @(Selector)
@@ -101,8 +102,8 @@ module MultiplexerOutput_top(Clock,Reset,Increment, Selector,Hex, DayOnes, DayTe
 		end
 
 		2: begin
-		Hex[0:6] = TimeDigit1;
-		Hex[7:13] = TimeDigit2;
+		Hex[0:6] = TimeDigit7;
+		Hex[7:13] = TimeDigit8;
 		Hex[14:20] = 7'b1111111;
 		Hex[21:27] = DayLed0;
 		Hex[28:34] = DayLed1;
@@ -110,22 +111,187 @@ module MultiplexerOutput_top(Clock,Reset,Increment, Selector,Hex, DayOnes, DayTe
 		end
 		
 		6: begin
-		if(TDigit0 == 7'b0000001 && TDigit1 == 7'b0000001) begin
+		
+		
+		
+		//Scheduler for MW
+		if(BCDayCombine % 7 == 0 || BCDayCombine % 7 == 2) begin
+			
+			if(BCDHourCombine == 7) begin
+				if(BCDMinuteCombine > 39 && BCDMinuteCombine < 59) begin
+						Hex[0:6] = 7'b1111111;
+						Hex[7:13] = 7'b1111111;
+						Hex[14:20] = 7'b0110001;
+						Hex[21:27] = 7'b1111110;
+						Hex[28:34] = 7'b0000001;
+						Hex[35:41] = 7'b0010010;
+				end
+			end
+			else if(BCDHourCombine == 8) begin
 				Hex[0:6] = 7'b1111111;
+				Hex[7:13] = 7'b1111111;
+				Hex[14:20] = 7'b0110001;
+				Hex[21:27] = 7'b1111110;
+				Hex[28:34] = 7'b0000001;
+				Hex[35:41] = 7'b0010010;
+			end
+			else if(BCDHourCombine == 9) begin
+				if(BCDMinuteCombine > 1 && BCDMinuteCombine < 10) begin
+					//1st subject end
+						Hex[0:6] = 7'b1111111;
+						Hex[7:13] = 7'b1111111;
+						Hex[14:20] = 7'b0110001;
+						Hex[21:27] = 7'b1111110;
+						Hex[28:34] = 7'b0000001;
+						Hex[35:41] = 7'b0010010;
+				end
+				else if(BCDMinuteCombine > 19 && BCDMinuteCombine < 59) begin
+						//2nd subject start
+						Hex[0:6] = 7'b1111111;
+						Hex[7:13] = 7'b1111111;
+						Hex[14:20] = 7'b0110001;
+						Hex[21:27] = 7'b1111110;
+						Hex[28:34] = 7'b0000000;
+						Hex[35:41] = 7'b0010010;
+				end
+				else begin
+				//catch no subject must be off
+					Hex[0:6] = 7'b1111111;
+					Hex[7:13] = 7'b1111111;
+					Hex[14:20] = 7'b1111111;
+					Hex[21:27] = 7'b0111000;
+					Hex[28:34] = 7'b0111000;
+					Hex[35:41] = 7'b0000001;
+		
+				end
+			end
+			else if(BCDHourCombine == 10) begin
+			//end of 2nd subject
+				if(BCDMinuteCombine > 1 && BCDMinuteCombine < 50) begin
+					Hex[0:6] = 7'b1111111;
+					Hex[7:13] = 7'b1111111;
+					Hex[14:20] = 7'b0110001;
+					Hex[21:27] = 7'b1111110;
+					Hex[28:34] = 7'b0000000;
+					Hex[35:41] = 7'b0010010;
+				end
+			end
+		
+			else begin
+			//catch no subject must be off
+					Hex[0:6] = 7'b1111111;
+					Hex[7:13] = 7'b1111111;
+					Hex[14:20] = 7'b1111111;
+					Hex[21:27] = 7'b0111000;
+					Hex[28:34] = 7'b0111000;
+					Hex[35:41] = 7'b0000001;
+
+			end
+		
+		end
+		
+		//Scheduler for TTh
+		else if(BCDayCombine % 7 == 1 || BCDayCombine % 7 == 3) begin
+			if(BCDHourCombine == 7) begin
+				if(BCDMinuteCombine > 39 && BCDMinuteCombine < 59) begin
+						Hex[0:6] = 7'b1111111;
+						Hex[7:13] = 7'b1111111;
+						Hex[14:20] = 7'b0110001;
+						Hex[21:27] = 7'b1111110;
+						Hex[28:34] = 7'b0000001;
+						Hex[35:41] = 7'b0010010;
+				end
+			end
+			else if(BCDHourCombine == 8) begin
+				Hex[0:6] = 7'b1111111;
+				Hex[7:13] = 7'b1111111;
+				Hex[14:20] = 7'b0110001;
+				Hex[21:27] = 7'b1111110;
+				Hex[28:34] = 7'b0000001;
+				Hex[35:41] = 7'b0010010;
+			end
+			else if(BCDHourCombine == 9) begin
+				if(BCDMinuteCombine > 1 && BCDMinuteCombine < 10) begin
+					//1st subject end
+						Hex[0:6] = 7'b1111111;
+						Hex[7:13] = 7'b1111111;
+						Hex[14:20] = 7'b0110001;
+						Hex[21:27] = 7'b1111110;
+						Hex[28:34] = 7'b0000001;
+						Hex[35:41] = 7'b0010010;
+				end
+				else if(BCDMinuteCombine > 19 && BCDMinuteCombine < 59) begin
+						//2nd subject start
+						Hex[0:6] = 7'b1111111;
+						Hex[7:13] = 7'b1111111;
+						Hex[14:20] = 7'b0110001;
+						Hex[21:27] = 7'b1111110;
+						Hex[28:34] = 7'b0000000;
+						Hex[35:41] = 7'b0010010;
+				end
+				else begin
+				//catch no subject must be off
+					Hex[0:6] = 7'b1111111;
+					Hex[7:13] = 7'b1111111;
+					Hex[14:20] = 7'b1111111;
+					Hex[21:27] = 7'b0111000;
+					Hex[28:34] = 7'b0111000;
+					Hex[35:41] = 7'b0000001;
+		
+				end
+			end
+			else if(BCDHourCombine == 10) begin
+			//end of 2nd subject
+				if(BCDMinuteCombine > 1 && BCDMinuteCombine < 50) begin
+					Hex[0:6] = 7'b1111111;
+					Hex[7:13] = 7'b1111111;
+					Hex[14:20] = 7'b0110001;
+					Hex[21:27] = 7'b1111110;
+					Hex[28:34] = 7'b0000000;
+					Hex[35:41] = 7'b0010010;
+				end
+			end
+		end
+		//Scheduler for Friday
+		else if(BCDayCombine % 7 == 4) begin
+			if(BCDHourCombine > 8 && BCDHourCombine < 13) begin
+				Hex[0:6] = 7'b1111111;
+				Hex[7:13] = 7'b1111111;
+				Hex[14:20] = 7'b0110001;
+				Hex[21:27] = 7'b1111110;
+				Hex[28:34] = 7'b0000001;
+				Hex[35:41] = 7'b0010010;
+			end
+			else if(BCDHourCombine > 12 && BCDHourCombine < 17) begin
+				Hex[0:6] = 7'b1111111;
+				Hex[7:13] = 7'b1111111;
+				Hex[14:20] = 7'b0110001;
+				Hex[21:27] = 7'b1111110;
+				Hex[28:34] = 7'b0000000;
+				Hex[35:41] = 7'b0010010;
+			end
+			else begin
+				//catch no subject must be off
+					Hex[0:6] = 7'b1111111;
+					Hex[7:13] = 7'b1111111;
+					Hex[14:20] = 7'b1111111;
+					Hex[21:27] = 7'b0111000;
+					Hex[28:34] = 7'b0111000;
+					Hex[35:41] = 7'b0000001;
+			end
+			
+		end
+					
+		else if(PersonDigit1 == 0 && PersonDigit0 == 0) begin
+		Hex[0:6] = 7'b1111111;
 		Hex[7:13] = 7'b1111111;
 		Hex[14:20] = 7'b1111111;
 		Hex[21:27] = 7'b0111000;
 		Hex[28:34] = 7'b0111000;
 		Hex[35:41] = 7'b0000001;
 		end
-		if( BCDCombine % 7 == 0) begin
-			if(HourOnesBCD == 7) begin
-				if(HourTensBCD == 0) begin
-				
-				end
-			end
-		end
-		else begin
+		
+		else if (BCDayCombine % 7 == 5 || BCDayCombine % 7 == 5)begin
 		Hex[0:6] = 7'b1111111;
 		Hex[7:13] = 7'b1111111;
 		Hex[14:20] = 7'b0110001;
@@ -133,6 +299,8 @@ module MultiplexerOutput_top(Clock,Reset,Increment, Selector,Hex, DayOnes, DayTe
 		Hex[28:34] = TDigit0;
 		Hex[35:41] = TDigit1;
 		end
+		
+		
 		end
 		
 		4: begin

@@ -23,7 +23,7 @@ module Clock10ms(clkin, clkout, Selector);
 		else begin
 		integer i;
 		i <= i + 1;
-		if(i >= 2500) begin
+		if(i >= 10000) begin
 			i <= 0;
 			clkout <= ~clkout;
 		end

@@ -32,7 +32,7 @@ module OptimumTemperature(Selector, PersonTens, PersonOnes, TempTens, TempOnes);
 		TempOnes <= 4'b0010;
 		end
 
-		if(TotalPersons < 45 && TotalPersons > 34) begin
+		if( TotalPersons > 34) begin
 		TempTens <= 4'b0010;
 		TempOnes <= 4'b0000;
 		end
