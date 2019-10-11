@@ -2,8 +2,11 @@ module ClockCount(clock, reset, Enable, secbcd0, secbcd1, minbcd0, minbcd1, hour
 	input clock, reset, Enable;
 	output reg [3:0] secbcd0, secbcd1, minbcd0, minbcd1, hourbcd0, hourbcd1, daybcd0, daybcd1, monthbcd;
 	output reg [6:0] BCDayCombine, BCDHourCombine, BCDMinuteCombine;
+	
+	
 	always @(posedge clock)
 	begin
+	
 		if (reset) begin
 			secbcd0 <= 0;
 			secbcd1 <= 0;
@@ -11,9 +14,9 @@ module ClockCount(clock, reset, Enable, secbcd0, secbcd1, minbcd0, minbcd1, hour
 			minbcd1 <= 0;
 			hourbcd0 <= 0;
 			hourbcd1 <= 0;
-			daybcd0 <= 0;
+			daybcd0 <= 1;
 			daybcd1 <= 0;
-			monthbcd <= 0;
+			monthbcd <= 6;
 		end
 		
 		else if (Enable)

@@ -1,9 +1,10 @@
-module MultiplexerOutput_top(Clock,Reset,Increment, Selector,Hex, DayOnes, DayTens, MonthOnes);
+module MultiplexerOutput_top(Clock,Reset,Increment, Selector,Hex, Key0);
 
 	//inputs
 	input Clock;
 	input Reset;
 	input Increment;
+	input Key0;
 	input [7:0] Selector;
 	
 	//outputs
@@ -15,14 +16,13 @@ module MultiplexerOutput_top(Clock,Reset,Increment, Selector,Hex, DayOnes, DayTe
 	wire [3:0] BCD1, BCD0;
 	wire [3:0]  RoomDigit1, RoomDigit0, TempDigit1, TempDigit0;
 	wire [3:0] PersonDigit1, PersonDigit0;
-	wire running;
+	
 	
 	//wag timer code
 	wire [3:0] SecondOnesBCD, SecondTensBCD, MinuteOnesBCD, MinuteTensBCD, HourOnesBCD, HourTensBCD, DayOnesBCD, DayTensBCD, MonthBCD;
 	wire [6:0] BCDayCombine, BCDHourCombine, BCDMinuteCombine;
 	wire [6:0] SecondOnes, SecondTens, MinuteOnes, MinuteTens, HourOnes, HourTens;
-	output wire [3:0] DayOnes, MonthOnes;
-	output wire [1:0] DayTens;
+
 
 	reg Enable;
 	
@@ -34,7 +34,7 @@ module MultiplexerOutput_top(Clock,Reset,Increment, Selector,Hex, DayOnes, DayTe
 	end
 	
 	//runs in the background
-	Clock10ms clock10(.clkin(Clock), .clkout(clkout), .Selector(Selector));
+	Clock10ms clock10(.clkin(Clock), .clkout(clkout), .Key0(Key0), .Selector(Selector));
 	ClockCount c1(clkout, Reset, Enable, SecondOnesBCD, SecondTensBCD, MinuteOnesBCD, MinuteTensBCD, HourOnesBCD, HourTensBCD, DayOnesBCD, DayTensBCD, MonthBCD, BCDayCombine, BCDHourCombine, BCDMinuteCombine);
 	//BCDcount counter(clkout, Reset, Enable, BCD1, BCD0, BCDCombine);
 
@@ -151,7 +151,7 @@ module MultiplexerOutput_top(Clock,Reset,Increment, Selector,Hex, DayOnes, DayTe
 						Hex[7:13] = 7'b1111111;
 						Hex[14:20] = 7'b0110001;
 						Hex[21:27] = 7'b1111110;
-						Hex[28:34] = 7'b0000000;
+						Hex[28:34] = 7'b0000001;
 						Hex[35:41] = 7'b0010010;
 				end
 				else begin
@@ -172,7 +172,7 @@ module MultiplexerOutput_top(Clock,Reset,Increment, Selector,Hex, DayOnes, DayTe
 					Hex[7:13] = 7'b1111111;
 					Hex[14:20] = 7'b0110001;
 					Hex[21:27] = 7'b1111110;
-					Hex[28:34] = 7'b0000000;
+					Hex[28:34] = 7'b0000001;
 					Hex[35:41] = 7'b0010010;
 				end
 			end
@@ -198,8 +198,8 @@ module MultiplexerOutput_top(Clock,Reset,Increment, Selector,Hex, DayOnes, DayTe
 						Hex[7:13] = 7'b1111111;
 						Hex[14:20] = 7'b0110001;
 						Hex[21:27] = 7'b1111110;
-						Hex[28:34] = 7'b0000001;
-						Hex[35:41] = 7'b0010010;
+						Hex[28:34] = 7'b0000001; //0
+						Hex[35:41] = 7'b0010010; //2
 				end
 			end
 			else if(BCDHourCombine == 8) begin
@@ -207,8 +207,8 @@ module MultiplexerOutput_top(Clock,Reset,Increment, Selector,Hex, DayOnes, DayTe
 				Hex[7:13] = 7'b1111111;
 				Hex[14:20] = 7'b0110001;
 				Hex[21:27] = 7'b1111110;
-				Hex[28:34] = 7'b0000001;
-				Hex[35:41] = 7'b0010010;
+				Hex[28:34] = 7'b0000001; //0
+				Hex[35:41] = 7'b0010010; //2
 			end
 			else if(BCDHourCombine == 9) begin
 				if(BCDMinuteCombine > 1 && BCDMinuteCombine < 10) begin
@@ -217,8 +217,8 @@ module MultiplexerOutput_top(Clock,Reset,Increment, Selector,Hex, DayOnes, DayTe
 						Hex[7:13] = 7'b1111111;
 						Hex[14:20] = 7'b0110001;
 						Hex[21:27] = 7'b1111110;
-						Hex[28:34] = 7'b0000001;
-						Hex[35:41] = 7'b0010010;
+						Hex[28:34] = 7'b0000001; //0
+						Hex[35:41] = 7'b0010010; //2
 				end
 				else if(BCDMinuteCombine > 19 && BCDMinuteCombine < 59) begin
 						//2nd subject start
@@ -226,8 +226,8 @@ module MultiplexerOutput_top(Clock,Reset,Increment, Selector,Hex, DayOnes, DayTe
 						Hex[7:13] = 7'b1111111;
 						Hex[14:20] = 7'b0110001;
 						Hex[21:27] = 7'b1111110;
-						Hex[28:34] = 7'b0000000;
-						Hex[35:41] = 7'b0010010;
+						Hex[28:34] = 7'b0100000; //6
+						Hex[35:41] = 7'b0010010; //2
 				end
 				else begin
 				//catch no subject must be off
@@ -247,14 +247,25 @@ module MultiplexerOutput_top(Clock,Reset,Increment, Selector,Hex, DayOnes, DayTe
 					Hex[7:13] = 7'b1111111;
 					Hex[14:20] = 7'b0110001;
 					Hex[21:27] = 7'b1111110;
-					Hex[28:34] = 7'b0000000;
+					Hex[28:34] = 7'b0100000;
 					Hex[35:41] = 7'b0010010;
 				end
 			end
+			else begin
+			//catch no subject must be off
+					Hex[0:6] = 7'b1111111;
+					Hex[7:13] = 7'b1111111;
+					Hex[14:20] = 7'b1111111;
+					Hex[21:27] = 7'b0111000;
+					Hex[28:34] = 7'b0111000;
+					Hex[35:41] = 7'b0000001;
+
+			end
+
 		end
 		//Scheduler for Friday
 		else if(BCDayCombine % 7 == 4) begin
-			if(BCDHourCombine > 8 && BCDHourCombine < 13) begin
+			if(BCDHourCombine > 8 && BCDHourCombine < 12) begin
 				Hex[0:6] = 7'b1111111;
 				Hex[7:13] = 7'b1111111;
 				Hex[14:20] = 7'b0110001;
@@ -262,12 +273,12 @@ module MultiplexerOutput_top(Clock,Reset,Increment, Selector,Hex, DayOnes, DayTe
 				Hex[28:34] = 7'b0000001;
 				Hex[35:41] = 7'b0010010;
 			end
-			else if(BCDHourCombine > 12 && BCDHourCombine < 17) begin
+			else if(BCDHourCombine > 13 && BCDHourCombine < 17) begin
 				Hex[0:6] = 7'b1111111;
 				Hex[7:13] = 7'b1111111;
 				Hex[14:20] = 7'b0110001;
 				Hex[21:27] = 7'b1111110;
-				Hex[28:34] = 7'b0000000;
+				Hex[28:34] = 7'b0000001;
 				Hex[35:41] = 7'b0010010;
 			end
 			else begin
@@ -333,10 +344,10 @@ module MultiplexerOutput_top(Clock,Reset,Increment, Selector,Hex, DayOnes, DayTe
 		
 
 		7: begin
-		Hex[0:6] = TimeDigit1;
-		Hex[7:13] = TimeDigit2;
-		Hex[14:20] = 7'b0000001;
-		Hex[21:27] = 7'b0000001;
+		Hex[0:6] = TimeDigit5;
+		Hex[7:13] = TimeDigit6;
+		Hex[14:20] = TimeDigit7;
+		Hex[21:27] = TimeDigit8;
 		Hex[28:34] = 7'b0011000;
 		Hex[35:41] = 7'b1000001;
 		end
