@@ -1,5 +1,12 @@
 # Development of Cost-Efficient Air Conditioning Controllers using FPGA
-Our final project
+## Final Project of Team Spectre
+Member | Position | Link
+------------ | ------------- | -------------
+Julian Agawin | Dragon-blooded | https://github.com/BottleneckGamer
+Julian Agawin | Dragon-blooded | https://github.com/BottleneckGamer
+Julian Agawin | Dragon-blooded | https://github.com/BottleneckGamer
+Julian Agawin | Dragon-blooded | https://github.com/BottleneckGamer
+Julian Agawin | Dragon-blooded | https://github.com/BottleneckGamer
 
 - Module 0011:	Current State
 
