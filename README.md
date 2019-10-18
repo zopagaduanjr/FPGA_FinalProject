@@ -3,10 +3,10 @@
 Member | Position | Link
 ------------ | ------------- | -------------
 Julian Agawin | Dragon-blooded | https://github.com/BottleneckGamer
-Julian Agawin | Dragon-blooded | https://github.com/BottleneckGamer
-Julian Agawin | Dragon-blooded | https://github.com/BottleneckGamer
-Julian Agawin | Dragon-blooded | https://github.com/BottleneckGamer
-Julian Agawin | Dragon-blooded | https://github.com/BottleneckGamer
+Joshua Gallenero | Chivalric Knight | N/A
+Gil Bancud | Troubadour | https://github.com/gembancud
+Carmela Manalo | Court Arcanist  | https://github.com/xtremex47
+Zaldy Pagaduan Jr. | Seneschal | https://github.com/zopagaduanjr
 
 - Module 0011:	Current State
 
